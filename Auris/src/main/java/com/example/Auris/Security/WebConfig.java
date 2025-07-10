@@ -17,7 +17,9 @@ public class WebConfig implements WebMvcConfigurer {
             "http://localhost:3001",    // Alternative frontend port
             "http://127.0.0.1:3001",
             "https://*.vercel.app",     // Vercel deployments
-            "https://*.herokuapp.com"   // Heroku deployments
+            "https://*.herokuapp.com",  // Heroku deployments
+            "https://*.railway.app",    // Railway deployments
+            "https://*.up.railway.app"  // Railway custom domains
         )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
