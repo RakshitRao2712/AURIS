@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Camera, Save, X, User, Mail, Phone } from 'lucide-react';
-import { API_BASE_URL } from '../../lib/config';
+import { API_BASE_URL } from '../../../lib/config';
 
 interface ProfileData {
   id: number;
