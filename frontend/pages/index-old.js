@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Navbar from '../components/navBar'; // Fixed casing to match actual file
+import Navbar from '../components/Navbar'; // Fixed casing to match actual file
 import Sidebar from '../components/Sidebar';
 import ChatArea from '../components/ChatArea';
 import InputArea from '../components/InputArea'; // Added import
