@@ -35,6 +35,143 @@ export default function Register() {
     if (errorMessage) setErrorMessage('');
   };
 
+  // Google Sign-In callback with rate limiting protection
+  const handleGoogleLogin = async (credential: string) => {
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      console.log('🔑 Attempting Google registration/login');
+      
+      const response = await fetch(`${API_BASE_URL}/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          credential: credential
+        })
+      });
+
+      // Handle rate limiting specifically
+      if (response.status === 429) {
+        throw new Error('Too many requests. Please wait a moment and try again.');
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Google registration failed');
+      }
+
+      console.log('✅ Google registration/login successful:', data);
+      
+      // Store user authentication data
+      localStorage.setItem('userId', data.userId || data.id || '1');
+      localStorage.setItem('userEmail', data.email);
+      localStorage.setItem('authToken', data.token || 'temp-token');
+      
+      // Store complete user data
+      const userData = {
+        name: data.name || data.given_name || '',
+        email: data.email,
+        phone: data.phone || '',
+        id: data.userId || data.id,
+        avatar: data.picture || data.avatar || ''
+      };
+      localStorage.setItem('userData', JSON.stringify(userData));
+      
+      console.log('💾 Stored Google user data:', userData);
+      
+      // Redirect to dashboard
+      router.push('/');
+
+    } catch (error: any) {
+      console.error('❌ Google registration failed:', error);
+      setErrorMessage(error.message || 'Google registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initialize Google Sign-In with rate limiting protection
+  useEffect(() => {
+    let initializationAttempts = 0;
+    const maxAttempts = 3;
+    
+    const initializeGoogleSignIn = () => {
+      if (typeof window !== 'undefined' && (window as any).google && initializationAttempts < maxAttempts) {
+        initializationAttempts++;
+        
+        try {
+          (window as any).google.accounts.id.initialize({
+            client_id: '308626026639-mjsot4dvjkc6a62j76ahjh4hrfogu419.apps.googleusercontent.com',
+            callback: (response: any) => {
+              handleGoogleLogin(response.credential);
+            },
+            auto_select: false,
+            cancel_on_tap_outside: true
+          });
+          
+          // Add delay before rendering button to prevent rate limits
+          setTimeout(() => {
+            const buttonContainer = document.getElementById('google-signin-button');
+            if (buttonContainer) {
+              (window as any).google.accounts.id.renderButton(
+                buttonContainer,
+                {
+                  theme: 'outline',
+                  size: 'large',
+                  text: 'signup_with',
+                  shape: 'rectangular',
+                  width: 400,
+                  logo_alignment: 'left',
+                  type: 'standard'
+                }
+              );
+            }
+          }, 500); // 500ms delay
+          
+          console.log('✅ Google Sign-In initialized successfully');
+          console.log('🔍 Current origin:', window.location.origin);
+          console.log('🔍 Current URL:', window.location.href);
+        } catch (error: any) {
+          console.error('❌ Google Sign-In initialization failed:', error);
+          
+          // Retry after delay if it's a rate limit issue
+          if (error.message.includes('429') || error.message.includes('rate')) {
+            console.log('🔄 Retrying Google Sign-In initialization in 2 seconds...');
+            setTimeout(initializeGoogleSignIn, 2000);
+          }
+        }
+      }
+    };
+
+    // Wait for Google script to load with timeout
+    const timeoutId = setTimeout(() => {
+      if (!(window as any).google) {
+        console.warn('⚠️ Google Sign-In script failed to load within timeout');
+      }
+    }, 10000);
+
+    if ((window as any).google) {
+      clearTimeout(timeoutId);
+      initializeGoogleSignIn();
+    } else {
+      const handleLoad = () => {
+        clearTimeout(timeoutId);
+        initializeGoogleSignIn();
+      };
+      
+      window.addEventListener('load', handleLoad);
+      return () => {
+        clearTimeout(timeoutId);
+        window.removeEventListener('load', handleLoad);
+      };
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -98,6 +235,7 @@ export default function Register() {
         <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
       </Head>
       
       <div className="register-container">
@@ -142,6 +280,14 @@ export default function Register() {
             >
               {isLoading ? 'CREATING ACCOUNT...' : 'REGISTER'}
             </button>
+            
+            {/* Divider */}
+            <div className="divider">
+              <span>OR</span>
+            </div>
+            
+            {/* Google Sign-In Button */}
+            <div id="google-signin-button" className="google-signin-container"></div>
             
             <div className="register">
               <p>
@@ -335,6 +481,35 @@ export default function Register() {
           border-radius: 5px;
           margin-bottom: 20px;
           border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .divider {
+          display: flex;
+          align-items: center;
+          margin: 20px 0;
+          text-align: center;
+        }
+        
+        .divider::before,
+        .divider::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .divider span {
+          padding: 0 15px;
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 14px;
+          font-weight: 500;
+        }
+        
+        .google-signin-container {
+          width: 100%;
+          margin-bottom: 10px;
+          display: flex;
+          justify-content: center;
         }
         
         @keyframes slideFadeIn {
