@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Camera, Save, X, User, Mail, Phone } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/config';
 
 interface ProfileData {
   id: number;
@@ -26,7 +27,7 @@ export default function EditProfile() {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       // Redirect to login if not authenticated
-      window.location.href = 'http://localhost:8080/login';
+      window.location.href = '/login';
       return;
     }
     
@@ -44,13 +45,13 @@ export default function EditProfile() {
         throw new Error('No user logged in');
       }
       
-      const response = await fetch(`http://localhost:8080/api/user/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/api/user/${userId}`);
       
       if (!response.ok) {
         // If unauthorized, clear localStorage and redirect to login
         if (response.status === 401 || response.status === 403) {
           localStorage.clear();
-          window.location.href = 'http://localhost:8080/login';
+          window.location.href = '/login';
           return;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -101,7 +102,7 @@ export default function EditProfile() {
     try {
       setIsSaving(true);
       const userId = profileData.id;
-      const response = await fetch(`http://localhost:8080/api/user/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/user/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -154,7 +155,7 @@ const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) =>
         formData.append('file', file);
         const userId = profileData.id;
         
-        const response = await fetch(`http://localhost:8080/api/user/${userId}/avatar`, {
+        const response = await fetch(`${API_BASE_URL}/api/user/${userId}/avatar`, {
           method: 'POST',
           body: formData,
         });

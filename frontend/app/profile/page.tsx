@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Edit3, Mail, Phone, LogOut } from 'lucide-react';
+import { API_BASE_URL } from '../lib/config';
 
 interface ProfileData {
   id: number;
@@ -21,7 +22,7 @@ export default function Profile() {
   const handleLogout = async () => {
     try {
       // Call logout endpoint
-      await fetch('http://localhost:8080/auth/logout', {
+      await fetch(`${API_BASE_URL}/auth/logout`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -33,12 +34,12 @@ export default function Profile() {
       localStorage.removeItem('userData');
       
       // Redirect to login
-      window.location.href = 'http://localhost:8080/login';
+      window.location.href = '/login';
     } catch (err) {
       console.error('Logout failed:', err);
       // Even if logout fails, clear local storage and redirect
       localStorage.clear();
-      window.location.href = 'http://localhost:8080/login';
+      window.location.href = '/login';
     }
   };
 
@@ -47,7 +48,7 @@ export default function Profile() {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       // Redirect to login if not authenticated
-      window.location.href = 'http://localhost:8080/login';
+      window.location.href = '/login';
       return;
     }
     
@@ -65,13 +66,13 @@ export default function Profile() {
         throw new Error('No user logged in');
       }
       
-      const response = await fetch(`http://localhost:8080/api/user/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/api/user/${userId}`);
       
       if (!response.ok) {
         // If unauthorized, clear localStorage and redirect to login
         if (response.status === 401 || response.status === 403) {
           localStorage.clear();
-          window.location.href = 'http://localhost:8080/login';
+          window.location.href = '/login';
           return;
         }
         throw new Error(`HTTP error! status: ${response.status}`);

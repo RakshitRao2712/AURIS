@@ -11,7 +11,7 @@ export default function Home() {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       // Redirect to login if not authenticated
-      window.location.href = `${BACKEND_URL}/login`;
+      window.location.href = '/login';
       return;
     }
   }, []);
