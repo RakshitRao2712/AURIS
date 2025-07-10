@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Edit3, Mail, Phone, LogOut } from 'lucide-react';
-import { API_BASE_URL } from '../lib/config';
+import { API_BASE_URL } from '../../lib/config';
 
 interface ProfileData {
   id: number;
