@@ -95,7 +95,7 @@ export default function EditProfile() {
     setIsDirty(true);
   };
 
-  const handleSave = async () = {
+  const handleSave = async () => {
     if (!profileData) return;
     
     try {

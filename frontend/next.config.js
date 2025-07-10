@@ -21,9 +21,9 @@ const nextConfig = {
     // Allow data URLs for base64 images
     loader: 'default',
   },
-  experimental: {
-    appDir: true,
-  },
+  // experimental: {
+  //   appDir: true, // No longer needed in Next.js 13+
+  // },
   // Handle CORS for development
   async headers() {
     return [
