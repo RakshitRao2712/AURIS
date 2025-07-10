@@ -1,0 +1,349 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Head from 'next/head';
+import { API_BASE_URL } from '../../lib/config';
+
+export default function Register() {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const userData = localStorage.getItem('userData');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (userData && userEmail && userEmail !== 'guest@example.com') {
+      // User is already logged in, redirect to dashboard
+      router.push('/');
+    }
+  }, [router]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (errorMessage) setErrorMessage('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      console.log('📝 Attempting registration for:', formData.email);
+      
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Registration failed');
+      }
+
+      console.log('✅ Registration successful:', data);
+      
+      // Store user authentication data for the dashboard
+      localStorage.setItem('userId', data.userId || data.id || '1');
+      localStorage.setItem('userEmail', formData.email);
+      localStorage.setItem('authToken', data.token || 'temp-token');
+      
+      // Store complete user data for immediate display
+      const userData = {
+        name: data.name || '',
+        email: data.email || formData.email,
+        phone: data.phone || '',
+        id: data.userId || data.id,
+        avatar: data.avatar || ''
+      };
+      localStorage.setItem('userData', JSON.stringify(userData));
+      
+      console.log('💾 Stored user data:', userData);
+      
+      // Redirect to dashboard
+      router.push('/');
+
+    } catch (error: any) {
+      console.error('❌ Registration failed:', error);
+      setErrorMessage(error.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Head>
+        <title>Register - AURIS</title>
+        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      <div className="register-container">
+        <div className="wrapper">
+          <form onSubmit={handleSubmit}>
+            <h2 className="loginh2">REGISTER</h2>
+            
+            {errorMessage && (
+              <div className="error-message">
+                {errorMessage}
+              </div>
+            )}
+            
+            <div className="input-field">
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                disabled={isLoading}
+              />
+              <label>Email</label>
+            </div>
+            
+            <div className="input-field">
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+                disabled={isLoading}
+              />
+              <label>Password</label>
+            </div>
+            
+            <button 
+              className="submitbtn" 
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? 'CREATING ACCOUNT...' : 'REGISTER'}
+            </button>
+            
+            <div className="register">
+              <p>
+                Have an account?{' '}
+                <a 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push('/login');
+                  }}
+                >
+                  Login
+                </a>
+              </p>
+            </div>
+            
+            <div className="register">
+              <p>
+                <a 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push('/');
+                  }}
+                >
+                  ← Back to home
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <style jsx>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: "Open Sans", sans-serif;
+        }
+        
+        .register-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          width: 100%;
+          padding: 0 10px;
+          position: relative;
+        }
+        
+        .register-container::before {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: 
+            linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
+            url('/images/mountain-landscape.jpg'),
+            linear-gradient(135deg, 
+              #4a5568 0%, 
+              #2d3748 25%, 
+              #1a202c 50%, 
+              #2d3748 75%, 
+              #4a5568 100%
+            ),
+            linear-gradient(45deg, 
+              #ff7e5f 0%, 
+              #feb47b 25%, 
+              #86a8e7 50%, 
+              #7f7fd5 75%, 
+              #667eea 100%
+            );
+          background-position: center, center, center, center;
+          background-size: cover, cover, cover, cover;
+          background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+          background-attachment: fixed;
+          z-index: -1;
+        }
+        
+        .loginh2 {
+          font-family: 'Jua', sans-serif;
+          letter-spacing: 4px;
+        }
+        
+        .submitbtn {
+          font-family: 'Jua', sans-serif;
+        }
+        
+        .wrapper {
+          width: 400px;
+          border-radius: 8px;
+          padding: 30px;
+          text-align: center;
+          border: 2px solid rgba(255, 255, 255, 0.5);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+        
+        form {
+          display: flex;
+          flex-direction: column;
+          animation: slideFadeIn 0.8s ease-out forwards;
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        
+        h2 {
+          font-size: 2rem;
+          margin-bottom: 20px;
+          color: #fff;
+        }
+        
+        .input-field {
+          position: relative;
+          border-bottom: 2px solid #ccc;
+          margin: 15px 0;
+        }
+        
+        .input-field label {
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          color: #fff;
+          font-size: 16px;
+          pointer-events: none;
+          transition: 0.15s ease;
+        }
+        
+        .input-field input {
+          width: 100%;
+          height: 40px;
+          background: transparent;
+          border: none;
+          outline: none;
+          font-size: 16px;
+          color: #fff;
+        }
+        
+        .input-field input:focus~label,
+        .input-field input:valid~label {
+          font-size: 0.8rem;
+          top: 10px;
+          transform: translateY(-120%);
+        }
+        
+        .wrapper a {
+          color: #efefef;
+          text-decoration: none;
+        }
+        
+        .wrapper a:hover {
+          text-decoration: underline;
+        }
+        
+        button {
+          background: #fff;
+          color: #000;
+          font-weight: 600;
+          border: none;
+          padding: 12px 20px;
+          cursor: pointer;
+          border-radius: 3px;
+          font-size: 16px;
+          border: 2px solid transparent;
+          transition: 0.3s ease;
+        }
+        
+        button:hover:not(:disabled) {
+          color: #fff;
+          border-color: #fff;
+          background: rgba(255, 255, 255, 0.15);
+        }
+        
+        button:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+        
+        .register {
+          text-align: center;
+          margin-top: 30px;
+          color: #fff;
+        }
+        
+        .error-message {
+          background: rgba(255, 255, 255, 0.1);
+          color: #ff6b6b;
+          padding: 10px;
+          border-radius: 5px;
+          margin-bottom: 20px;
+          border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        @keyframes slideFadeIn {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+    </>
+  );
+}
