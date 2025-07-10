@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import { BACKEND_URL } from '../lib/config';
 
 export default function Home() {
   useEffect(() => {
@@ -10,7 +11,7 @@ export default function Home() {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       // Redirect to login if not authenticated
-      window.location.href = 'http://localhost:8080/login';
+      window.location.href = `${BACKEND_URL}/login`;
       return;
     }
   }, []);
