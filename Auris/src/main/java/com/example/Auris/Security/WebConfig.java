@@ -15,7 +15,9 @@ public class WebConfig implements WebMvcConfigurer {
             "http://localhost:3000",    // Next.js default port
             "http://127.0.0.1:3000",
             "http://localhost:3001",    // Alternative frontend port
-            "http://127.0.0.1:3001"
+            "http://127.0.0.1:3001",
+            "https://*.vercel.app",     // Vercel deployments
+            "https://*.herokuapp.com"   // Heroku deployments
         )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

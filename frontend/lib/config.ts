@@ -1,6 +1,9 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+const isDevelopment = process.env.NODE_ENV === 'development';
+const defaultBackendUrl = isDevelopment ? 'http://localhost:8080' : 'https://your-backend-url.herokuapp.com';
+
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || defaultBackendUrl;
+export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || defaultBackendUrl;
 
 // API Endpoints
 export const API_ENDPOINTS = {
