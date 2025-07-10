@@ -1,0 +1,199 @@
+body, html {
+    font-family: 'Jost', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .landing-container {
+     background-image: url("pexels-pixabay-355770.jpg");
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    color: #fff;
+    position: relative;
+  }
+
+  .navbar {
+    font-family: 'Jua', swap;
+    display: flex;
+    justify-content: space-around;
+    padding: 40px;
+    color: black;
+    font-weight: bold;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+  .groq{
+    padding-right: 140px;
+    margin-right: 150px ;
+  }
+  
+  
+  .hero {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  
+  .hero h2 {
+    font-family: 'Jost', sans-serif;
+    font-size: 3rem;
+    color: #bbb;
+    text-shadow:  1px 1px 2px rgba(0, 0, 0, 0.2);
+    /* margin-bottom: 0px; */
+    margin-bottom: -50px
+    
+  }
+  
+  
+  .hero h1 {
+    font-family: 'Jost', sans-serif;
+    font-size: 4rem;
+    font-weight: bold;
+/*  effect on anything  */
+    color: #222;
+    margin-top: 30px; 
+  margin-bottom: -100px;
+  }
+  
+  .login-btn {
+    font-family: 'Jua', swap;
+    margin-top: 100px;
+    padding: 15px 40px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    background-color: #10c3eb;
+  }
+  #groq1{
+    font-family: 'Jost', sans-serif;
+    color: rgb(24, 24, 18);
+    margin-top:50px;
+    margin-left: 560px;
+    letter-spacing: 5px;
+    font-size: 40px;
+  }
+  #groq1 {
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  #groq1.fade-in {
+    opacity: 1;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+  }
+  
+  
+  .navbar div {
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  /* Hover effect - color change */
+  .navbar div:hover {
+    color: #505050; 
+  }
+  
+  
+  
+  .navbar div:hover::after {
+    width: 100%;
+  }
+  
+  /* Optional: Scale effect */
+  .navbar div:hover {
+    transform: scale(1.05);
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hero h2, .hero h1 {
+    opacity: 0;
+  }
+  
+  /* Animation for ASK */
+  .hero h2 {
+    
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 1s forwards;
+  }
+  
+  /* Animation for ANYTHING */
+  .hero h1 {
+  
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 0.6s forwards;
+  }
+.navbar{
+    opacity: 0;
+}
+.navbar{
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease-out 0.6s forwards;
+ }
+
+.login-btn{
+  opacity: 0;
+}
+.login-btn{
+  transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 1s forwards;
+}
+.you:hover{
+ 
+  background-color: #333;
+  color: white;
+  border-radius: 10px;
+  
+}
+
+.doc:hover{
+  background-color: #333;
+  color: white;
+  border-radius: 10px;
+}
+.groq:hover{
+  background-color: #333;
+  color: white;
+  border-radius: 10px;
+}
+.about:hover{
+  background-color: #333;
+  color: white;
+  border-radius: 10px;
+}
+
+
+  
+  
+ 
+  

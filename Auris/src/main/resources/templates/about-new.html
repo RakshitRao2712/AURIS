@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me - AURIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6f42c1 0%, #5a67d8 50%, #667eea 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Enhanced Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 70%, rgba(111, 66, 193, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, rgba(90, 103, 216, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+            animation: pulse-glow 12s ease-in-out infinite;
+        }
+
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 70px 70px;
+            animation: grid-move 30s linear infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(70px, 70px); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(111, 66, 193, 0.2);
+            border-color: rgba(111, 66, 193, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(111, 66, 193, 0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 30px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 40px;
+            background: linear-gradient(135deg, #6f42c1, #5a67d8);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 
+                0 30px 60px rgba(111, 66, 193, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            animation: float-logo 3s ease-in-out infinite;
+        }
+
+        @keyframes float-logo {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #6f42c1, #5a67d8, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 50px;
+            font-weight: 300;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(111, 66, 193, 0.1);
+            border-color: rgba(111, 66, 193, 0.3);
+            box-shadow: 0 20px 40px rgba(111, 66, 193, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #6f42c1;
+            display: block;
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 100px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Bio Section */
+        .bio-section {
+            margin-bottom: 120px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff, #6f42c1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 80px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .bio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .bio-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 50px 40px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #6f42c1, transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .bio-card:hover::before {
+            opacity: 1;
+        }
+
+        .bio-card:hover {
+            transform: translateY(-10px);
+            background: rgba(111, 66, 193, 0.05);
+            border-color: rgba(111, 66, 193, 0.2);
+            box-shadow: 0 30px 60px rgba(111, 66, 193, 0.15);
+        }
+
+        .bio-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6f42c1, #5a67d8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 15px 30px rgba(111, 66, 193, 0.3);
+        }
+
+        .bio-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .bio-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .bio-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bio-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .bio-list i {
+            color: #6f42c1;
+            font-size: 1rem;
+            width: 16px;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            text-align: center;
+            padding: 80px 0;
+            margin-top: 120px;
+        }
+
+        .contact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .contact-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+        }
+
+        .contact-btn-primary {
+            background: linear-gradient(135deg, #6f42c1, #5a67d8);
+            color: white;
+            box-shadow: 0 15px 35px rgba(111, 66, 193, 0.4);
+        }
+
+        .contact-btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.6s;
+        }
+
+        .contact-btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .contact-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 50px rgba(111, 66, 193, 0.6);
+        }
+
+        .contact-btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .contact-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .bio-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .main-content {
+                padding: 80px 20px;
+            }
+            
+            .contact-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Loading animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6f42c1 0%, #5a67d8 50%, #667eea 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeOut 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(111, 66, 193, 0.2);
+            border-top: 3px solid #6f42c1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Profile Image Hover Effects */
+        .profile-image-new {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 30px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-icon:hover {
+            transform: scale(1.1) rotateY(10deg) rotateX(5deg);
+            box-shadow: 0 40px 80px rgba(111, 66, 193, 0.4);
+        }
+
+        .profile-icon:hover .profile-image-new {
+            filter: brightness(1.15) contrast(1.1) saturate(1.3);
+            border-radius: 20px;
+            transform: scale(1.02);
+        }
+
+
+        .profile-icon:hover::after {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: -25px;
+            right: -25px;
+            bottom: -25px;
+            background: radial-gradient(circle, rgba(111, 66, 193, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -2;
+            animation: pulse-outer 2s ease-in-out infinite;
+        }
+
+        @keyframes rotate-glow {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.05);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        @keyframes pulse-outer {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        /* Magnetic cursor effect */
+        .profile-icon {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-icon:hover {
+            animation: magnetic-float 4s ease-in-out infinite;
+        }
+
+        @keyframes magnetic-float {
+            0%, 100% {
+                transform: translateY(0px) rotateY(0deg);
+            }
+            25% {
+                transform: translateY(-8px) rotateY(5deg);
+            }
+            50% {
+                transform: translateY(-12px) rotateY(0deg);
+            }
+            75% {
+                transform: translateY(-8px) rotateY(-5deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <div class="bg-animation"></div>
+    
+    <nav class="nav">
+        <a href="/" class="nav-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="profile-icon">
+                <img src="/MYPFP.png" alt="Profile" class="profile-image-new">
+            </div>
+            <h1>About Me</h1>
+            <p class="subtitle">Creator of AURIS • AI Enthusiast • Full-Stack Developer</p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">5+</span>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Projects Built</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">1000+</span>
+                    <span class="stat-label">Users Helped</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Passion</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Bio Section -->
+        <section class="bio-section">
+            <h2 class="section-title">My Journey</h2>
+            <p class="section-subtitle">Passionate about creating intelligent solutions that make technology accessible to everyone</p>
+            
+            <div class="bio-grid">
+                <div class="bio-card">
+                    <div class="bio-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI & Machine Learning</h3>
+                    <p>Deep expertise in modern AI technologies, neural networks, and intelligent systems that power the future.</p>
+                    <ul class="bio-list">
+                        <li><i class="fas fa-check"></i> Large Language Models</li>
+                        <li><i class="fas fa-check"></i> Neural Networks</li>
+                        <li><i class="fas fa-check"></i> Computer Vision</li>
+                        <li><i class="fas fa-check"></i> Natural Language Processing</li>
+                    </ul>
+                </div>
+
+                <div class="bio-card">
+                    <div class="bio-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Full-Stack Development</h3>
+                    <p>End-to-end application development with modern frameworks, creating seamless user experiences.</p>
+                    <ul class="bio-list">
+                        <li><i class="fas fa-check"></i> React & Next.js</li>
+                        <li><i class="fas fa-check"></i> Spring Boot & Java</li>
+                        <li><i class="fas fa-check"></i> Database Design</li>
+                        <li><i class="fas fa-check"></i> Cloud Architecture</li>
+                    </ul>
+                </div>
+
+                <div class="bio-card">
+                    <div class="bio-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Innovation & Vision</h3>
+                    <p>Pushing boundaries of what's possible with emerging technologies and creative problem-solving.</p>
+                    <ul class="bio-list">
+                        <li><i class="fas fa-check"></i> Product Strategy</li>
+                        <li><i class="fas fa-check"></i> User Experience Design</li>
+                        <li><i class="fas fa-check"></i> Technical Leadership</li>
+                        <li><i class="fas fa-check"></i> Open Source Contributions</li>
+                    </ul>
+                </div>
+
+                <div class="bio-card">
+                    <div class="bio-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Philosophy</h3>
+                    <p>Believing in technology's power to enhance human potential and create meaningful connections.</p>
+                    <ul class="bio-list">
+                        <li><i class="fas fa-check"></i> Human-Centered Design</li>
+                        <li><i class="fas fa-check"></i> Ethical AI Development</li>
+                        <li><i class="fas fa-check"></i> Knowledge Sharing</li>
+                        <li><i class="fas fa-check"></i> Continuous Learning</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section">
+            <h2 class="contact-title">Let's Connect</h2>
+            <p class="contact-subtitle">Always excited to collaborate on innovative projects and share knowledge</p>
+            
+            <div class="contact-buttons">
+                <a href="mailto:krish@auris.com" class="contact-btn contact-btn-primary">
+                    <i class="fas fa-envelope"></i>
+                    Get in Touch
+                </a>
+                <a href="https://github.com" class="contact-btn contact-btn-secondary">
+                    <i class="fab fa-github"></i>
+                    GitHub
+                </a>
+                <a href="https://linkedin.com" class="contact-btn contact-btn-secondary">
+                    <i class="fab fa-linkedin"></i>
+                    LinkedIn
+                </a>
+                <a href="https://twitter.com" class="contact-btn contact-btn-secondary">
+                    <i class="fab fa-twitter"></i>
+                    Twitter
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Smooth scrolling and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all animated elements
+            document.querySelectorAll('.bio-card, .stat-item, .contact-section').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Parallax effect for background
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                const bgAnimation = document.querySelector('.bg-animation');
+                if (bgAnimation) {
+                    const x = (mouseX - 0.5) * 20;
+                    const y = (mouseY - 0.5) * 20;
+                    bgAnimation.style.transform = `translate(${x}px, ${y}px)`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

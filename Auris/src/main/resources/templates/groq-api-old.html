@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groq API - Lightning Fast AI Inference | AURIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Enhanced Professional Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 87, 34, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(244, 67, 54, 0.05) 0%, transparent 50%);
+            animation: pulse-glow 8s ease-in-out infinite;
+        }
+
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-family: 'Londrina Solid', cursive;
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            font-family: 'Londrina Solid', cursive;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card h2 i {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list i {
+            color: #ff6b6b;
+            font-size: 1.2rem;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .stats h2 {
+            font-family: 'Londrina Solid', cursive;
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .stat-item {
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 60px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 36px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff6b6b;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            background: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <nav class="nav">
+        <a href="/" class="nav-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Groq API</h1>
+            <p>Ultra-fast AI inference powered by groundbreaking LPU technology</p>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2>
+                    <i class="fas fa-bolt"></i>
+                    Lightning Speed
+                </h2>
+                <p>Groq's Language Processing Units (LPUs) deliver unprecedented inference speeds, processing tokens at rates that redefine real-time AI interactions.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> 500+ tokens per second</li>
+                    <li><i class="fas fa-check"></i> Sub-millisecond latency</li>
+                    <li><i class="fas fa-check"></i> Consistent performance</li>
+                    <li><i class="fas fa-check"></i> Real-time responses</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <i class="fas fa-brain"></i>
+                    Advanced Models
+                </h2>
+                <p>Access state-of-the-art language models optimized for Groq's unique architecture, delivering both speed and intelligence.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> Llama 3.1 (8B, 70B, 405B)</li>
+                    <li><i class="fas fa-check"></i> Mixtral 8x7B</li>
+                    <li><i class="fas fa-check"></i> Gemma 2 (2B, 9B, 27B)</li>
+                    <li><i class="fas fa-check"></i> Specialized fine-tuned models</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <i class="fas fa-cogs"></i>
+                    Developer-Friendly
+                </h2>
+                <p>Simple, powerful APIs that integrate seamlessly with your applications, backed by comprehensive documentation and support.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> RESTful API design</li>
+                    <li><i class="fas fa-check"></i> Multiple SDKs available</li>
+                    <li><i class="fas fa-check"></i> Comprehensive documentation</li>
+                    <li><i class="fas fa-check"></i> 24/7 developer support</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <i class="fas fa-shield-alt"></i>
+                    Enterprise Ready
+                </h2>
+                <p>Built for scale with enterprise-grade security, reliability, and compliance features that meet the most demanding requirements.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> SOC 2 Type II certified</li>
+                    <li><i class="fas fa-check"></i> 99.9% uptime SLA</li>
+                    <li><i class="fas fa-check"></i> Data privacy protection</li>
+                    <li><i class="fas fa-check"></i> Multi-region deployment</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="stats">
+            <h2>Performance Metrics</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Tokens/Second</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Uptime</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">< 1ms</span>
+                    <span class="stat-label">Latency</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Support</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta">
+            <a href="https://groq.com" class="cta-btn">
+                <i class="fas fa-external-link-alt"></i>
+                Learn More About Groq
+            </a>
+        </div>
+    </div>
+</body>
+</html>

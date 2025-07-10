@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" th:href="@{/login.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <form id="loginForm">
+      <h2 class="loginh2">LOGIN</h2>
+        <div class="input-field">
+        <input type="text" name="email" required>
+        <label>Email</label>
+      </div>
+      <div class="input-field">
+        <input type="password" name="password" required>
+        <label>Password</label>
+      </div>
+       
+      <button class="submitbtn"  type="submit">LOG IN</button>
+      <div class="register">
+        <p>Don't have an account? <a href="/register">Register</a></p>
+      </div>
+    </form>
+  </div>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const email = event.target.email.value;
+      const password = event.target.password.value;
+
+      try {
+        const response = await fetch("http://localhost:8080/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+          throw new Error("Invalid login");
+        }
+
+        const data = await response.json();
+        console.log("Login successful:", data);
+        
+        // Store user authentication data for the dashboard
+        localStorage.setItem('userId', data.userId || data.id || '1');
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('authToken', data.token || 'temp-token');
+        
+        // Store complete user data for immediate display
+        const userData = {
+          name: data.name || email.split('@')[0],
+          email: data.email || email,
+          phone: data.phone || '',
+          id: data.userId || data.id
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        console.log('Stored user data:', userData);
+        console.log('All localStorage after login:', {
+          userId: localStorage.getItem('userId'),
+          userEmail: localStorage.getItem('userEmail'),
+          authToken: localStorage.getItem('authToken'),
+          userData: localStorage.getItem('userData')
+        });
+        
+        // Add a small delay to ensure data is stored before redirect
+        setTimeout(() => {
+          window.location.href = "http://localhost:3000";
+        }, 100);
+
+      } catch (error) {
+        console.error("Login failed:", error);
+        alert("Login failed. Please check your email and password.");
+      }
+    });
+  </script>
+</body>
+</html>

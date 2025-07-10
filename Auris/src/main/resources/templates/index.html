@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURIS - AI-Powered Assistant</title>
+  <link rel="stylesheet" th:href="@{/style.css}" >
+
+  <!-- Modern Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary-color: #ec4899;
+      --accent-color: #06b6d4;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-light: #9ca3af;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --border-color: #e5e7eb;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Modern animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .slide-in-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .slide-in-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .slide-in-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .slide-in-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    /* Delay classes */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+    .delay-4 { transition-delay: 0.4s; }
+    .delay-5 { transition-delay: 0.5s; }
+
+    /* Floating animation for background elements */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-10px) rotate(1deg); }
+      66% { transform: translateY(5px) rotate(-1deg); }
+    }
+
+    @keyframes floatReverse {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(10px) rotate(-1deg); }
+      66% { transform: translateY(-5px) rotate(1deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+
+    /* Gradient text animation */
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .gradient-text {
+      background: linear-gradient(-45deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-dark));
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 6s ease infinite;
+    }
+
+    /* Button hover effects */
+    .btn-hover-effect {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .btn-hover-effect::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-hover-effect:hover::before {
+      left: 100%;
+    }
+
+    /* Glass morphism effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Modern card hover effect */
+    .modern-card {
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      border: 1px solid var(--border-color);
+    }
+
+    .modern-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary-color);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    /* Particle System */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(34, 197, 94, 0.4);
+      border-radius: 50%;
+      opacity: 0.15;
+      animation: particleFloat 15s infinite linear;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+    }
+
+    .particle:nth-child(odd) {
+      animation-direction: reverse;
+      background: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .particle:nth-child(3n) {
+      background: rgba(5, 150, 105, 0.4);
+      animation-duration: 20s;
+      box-shadow: 0 0 10px rgba(5, 150, 105, 0.3);
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.3;
+      }
+      90% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.08);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(34, 197, 94, 0.1);
+    }
+
+    .shape-1 {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 10%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .shape-2 {
+      width: 150px;
+      height: 150px;
+      top: 60%;
+      right: 10%;
+      animation: floatReverse 8s ease-in-out infinite;
+    }
+
+    .shape-3 {
+      width: 100px;
+      height: 100px;
+      top: 20%;
+      right: 30%;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .shape-4 {
+      width: 120px;
+      height: 120px;
+      bottom: 20%;
+      left: 20%;
+      animation: float 7s ease-in-out infinite reverse;
+    }
+
+    .shape-5 {
+      width: 80px;
+      height: 80px;
+      top: 40%;
+      left: 60%;
+      animation: floatReverse 5s ease-in-out infinite;
+    }
+
+    /* Modern Navigation */
+    .modern-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 4rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .nav-brand {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      transform: translateY(-2px);
+    }
+
+    .nav-link.special {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-link.special:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px) scale(1.05);
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-toggle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .theme-toggle:hover::before {
+      left: 100%;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: #22c55e;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+    }
+
+    .theme-toggle i {
+      font-size: 1rem;
+    }
+
+    .theme-toggle.active {
+      background: rgba(34, 197, 94, 0.3);
+      border-color: #22c55e;
+      color: white;
+    }
+
+    /* Hero Content */
+    .hero-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      padding: 0 4rem 4rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-text {
+      color: white;
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+      font-family: 'Space Grotesk', sans-serif;
+      animation: heroTitleSlide 1.2s ease-out;
+    }
+
+    @keyframes heroTitleSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.9);
+      }
+      60% {
+        opacity: 0.8;
+        transform: translateY(-10px) scale(1.02);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 400;
+      animation: heroSubtitleSlide 1.5s ease-out 0.3s both;
+    }
+
+    @keyframes heroSubtitleSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+        filter: blur(5px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      animation: heroButtonsSlide 1.8s ease-out 0.6s both;
+    }
+
+    @keyframes heroButtonsSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-3px);
+    }
+
+    /* AI Visualization */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .ai-visualization {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      animation: aiVisualizationFloat 2s ease-out 0.9s both;
+    }
+
+    @keyframes aiVisualizationFloat {
+      0% {
+        opacity: 0;
+        transform: translateX(50px) scale(0.8);
+      }
+      50% {
+        opacity: 0.7;
+        transform: translateX(-10px) scale(1.05);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    .ai-brain {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 70%);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(34, 197, 94, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 40px rgba(34, 197, 94, 0.2);
+    }
+
+    .brain-core {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #22c55e, #10b981);
+      box-shadow: 0 0 50px rgba(34, 197, 94, 0.6);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    .neural-network {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .neuron {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.9);
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    }
+
+    .n1 { top: 20%; left: 50%; animation: pulse 2s ease-in-out infinite; }
+    .n2 { top: 40%; right: 20%; animation: pulse 2.5s ease-in-out infinite; }
+    .n3 { bottom: 40%; left: 20%; animation: pulse 3s ease-in-out infinite; }
+    .n4 { bottom: 20%; right: 40%; animation: pulse 1.8s ease-in-out infinite; }
+    .n5 { top: 60%; left: 60%; animation: pulse 2.2s ease-in-out infinite; }
+
+    .connection {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.7), transparent);
+      animation: pulse 4s ease-in-out infinite;
+      box-shadow: 0 0 5px rgba(34, 197, 94, 0.4);
+    }
+
+    .c1 {
+      top: 30%;
+      left: 30%;
+      width: 40%;
+      transform: rotate(45deg);
+    }
+
+    .c2 {
+      top: 50%;
+      left: 20%;
+      width: 60%;
+      transform: rotate(-20deg);
+    }
+
+    .c3 {
+      bottom: 30%;
+      left: 25%;
+      width: 50%;
+      transform: rotate(30deg);
+    }
+
+    .c4 {
+      top: 40%;
+      right: 25%;
+      width: 35%;
+      transform: rotate(-60deg);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .modern-nav {
+        padding: 1rem 2rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+        padding: 0 2rem 2rem;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .hero-buttons {
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .ai-visualization {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    /* Modern Features Section */
+    .features-section {
+      padding: 6rem 0;
+      background: var(--bg-secondary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .feature-highlight {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover .feature-highlight {
+      opacity: 1;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
+      transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+      }
+
+      .section-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .feature-card {
+        padding: 2rem;
+      }
+
+      .container {
+        padding: 0 1rem;
+      }
+    }
+
+    /* How It Works Section */
+    .how-it-works-section {
+      padding: 8rem 0;
+      background: var(--bg-primary);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 3rem;
+      margin-top: 4rem;
+    }
+
+    .step-card {
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      position: relative;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary-color);
+    }
+
+    .step-number {
+      position: absolute;
+      top: -20px;
+      left: 2rem;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .step-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem auto 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .step-icon i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .step-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .step-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .step-arrow {
+      position: absolute;
+      top: 50%;
+      right: -1.5rem;
+      font-size: 2rem;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    .step-card:last-child .step-arrow {
+      display: none;
+    }
+
+    /* Testimonials Section */
+    .testimonials-section {
+      padding: 8rem 0;
+      background: var(--bg-secondary);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 3rem;
+      margin-top: 4rem;
+    }
+
+    .testimonial-card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary-color);
+    }
+
+    .testimonial-content {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .quote-icon {
+      font-size: 4rem;
+      color: var(--primary-color);
+      opacity: 0.2;
+      position: absolute;
+      top: -1rem;
+      left: -0.5rem;
+      font-family: serif;
+    }
+
+    .testimonial-text {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-top: 1rem;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .author-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--primary-color);
+    }
+
+    .author-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .author-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .author-title {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Mobile Responsiveness for new sections */
+    @media (max-width: 768px) {
+      .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .step-arrow {
+        display: none;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .testimonial-card {
+        padding: 2rem;
+      }
+
+      .how-it-works-section,
+      .testimonials-section {
+        padding: 4rem 0;
+      }
+    }
+
+    /* Creator Section */
+    .creator-section {
+      padding: 8rem 0;
+      background: var(--bg-primary);
+      position: relative;
+    }
+
+    .creator-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .creator-card {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      margin: 3rem 0;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s ease;
+    }
+
+    .creator-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary-color);
+    }
+
+    .creator-avatar {
+      flex-shrink: 0;
+    }
+
+    .avatar-placeholder {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .avatar-placeholder i {
+      font-size: 4rem;
+      color: white;
+    }
+
+    .creator-details {
+      flex: 1;
+    }
+
+    .creator-name {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .creator-title {
+      font-size: 1.1rem;
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .creator-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .creator-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .creator-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .creator-stat i {
+      color: var(--accent-color);
+      font-size: 1rem;
+    }
+
+    .creator-message {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .creator-message::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .creator-message:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .creator-message:hover::after {
+      left: 100%;
+    }
+
+    .creator-message::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    }
+
+    .message-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .quote-mark {
+      font-size: 4rem;
+      font-family: serif;
+      color: rgba(255, 255, 255, 0.3);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .message-text {
+      font-size: 1.2rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+
+    .message-signature {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: right;
+      opacity: 0.9;
+    }
+
+    /* Mobile responsiveness for creator section */
+    @media (max-width: 768px) {
+      .creator-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+      }
+
+      .avatar-placeholder i {
+        font-size: 3rem;
+      }
+
+      .creator-name {
+        font-size: 1.5rem;
+      }
+
+      .creator-stats {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .creator-message {
+        padding: 2rem;
+      }
+
+      .quote-mark {
+        font-size: 3rem;
+      }
+
+      .message-text {
+        font-size: 1.1rem;
+      }
+
+      .creator-section {
+        padding: 4rem 0;
+      }
+    }
+
+    /* Call to Action Section */
+    .cta-section {
+      padding: 8rem 0;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(5, 150, 105, 0.05) 0%, transparent 50%);
+      opacity: 0.6;
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      font-family: 'Space Grotesk', sans-serif;
+      line-height: 1.2;
+    }
+
+    .cta-subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid rgba(34, 197, 94, 0.6);
+      color: #22c55e;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-outline:hover {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: #22c55e;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+    }
+
+    .cta-features {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .cta-feature {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .cta-feature i {
+      color: #22c55e;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+      .cta-title {
+        font-size: 2.5rem;
+      }
+
+      .cta-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cta-features {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .cta-section {
+        padding: 4rem 0;
+      }
+    }
+
+    /* Dark Theme Styles */
+    .dark-theme .features-section {
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    }
+
+    .dark-theme .how-it-works-section {
+      background: linear-gradient(135deg, #16213e 0%, #1a1a2e 50%, #0f0f23 100%);
+    }
+
+    .dark-theme .testimonials-section {
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    }
+
+    .dark-theme .creator-section {
+      background: linear-gradient(135deg, #16213e 0%, #1a1a2e 50%, #0f0f23 100%);
+    }
+
+    .dark-theme .feature-card,
+    .dark-theme .step-card,
+    .dark-theme .testimonial-card,
+    .dark-theme .creator-card {
+      background: rgba(34, 197, 94, 0.05);
+      border-color: rgba(34, 197, 94, 0.1);
+    }
+
+    .dark-theme .feature-card:hover,
+    .dark-theme .step-card:hover,
+    .dark-theme .testimonial-card:hover,
+    .dark-theme .creator-card:hover {
+      border-color: rgba(34, 197, 94, 0.3);
+      box-shadow: 0 20px 40px rgba(34, 197, 94, 0.1);
+    }
+
+    .dark-theme .feature-icon,
+    .dark-theme .step-icon {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+    }
+
+    .dark-theme .step-number {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+    }
+
+    .dark-theme .feature-highlight {
+      background: linear-gradient(90deg, #22c55e, #10b981, #059669);
+    }
+
+    /* Dark Theme Text Colors */
+    .dark-theme .section-title,
+    .dark-theme .feature-title,
+    .dark-theme .step-title,
+    .dark-theme .creator-name,
+    .dark-theme .author-name {
+      color: white;
+    }
+
+    .dark-theme .section-subtitle,
+    .dark-theme .feature-description,
+    .dark-theme .step-description,
+    .dark-theme .creator-title,
+    .dark-theme .creator-description,
+    .dark-theme .testimonial-text,
+    .dark-theme .author-title,
+    .dark-theme .creator-stat {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .dark-theme .stat-label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .dark-theme .quote-icon {
+      color: rgba(34, 197, 94, 0.3);
+    }
+
+    .dark-theme .message-text,
+    .dark-theme .message-signature {
+      color: white;
+    }
+
+    /* Smooth transitions for theme change */
+    .features-section,
+    .how-it-works-section,
+    .testimonials-section,
+    .creator-section,
+    .feature-card,
+    .step-card,
+    .testimonial-card,
+    .creator-card,
+    .section-title,
+    .section-subtitle,
+    .feature-title,
+    .feature-description,
+    .step-title,
+    .step-description,
+    .creator-name,
+    .creator-title,
+    .creator-description,
+    .testimonial-text,
+    .author-name,
+    .author-title {
+      transition: all 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- Modern Hero Section -->
+  <section class="hero-section">
+    <!-- Animated Background -->
+    <div class="bg-animation">
+      <div class="particles">
+        <div class="particle" style="width: 4px; height: 4px; left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="width: 8px; height: 8px; left: 25%; animation-delay: 2s;"></div>
+        <div class="particle" style="width: 6px; height: 6px; left: 40%; animation-delay: 4s;"></div>
+        <div class="particle" style="width: 10px; height: 10px; left: 55%; animation-delay: 6s;"></div>
+        <div class="particle" style="width: 5px; height: 5px; left: 70%; animation-delay: 8s;"></div>
+        <div class="particle" style="width: 7px; height: 7px; left: 85%; animation-delay: 10s;"></div>
+        <div class="particle" style="width: 9px; height: 9px; left: 15%; animation-delay: 12s;"></div>
+        <div class="particle" style="width: 6px; height: 6px; left: 60%; animation-delay: 14s;"></div>
+      </div>
+      <div class="floating-shape shape-1"></div>
+      <div class="floating-shape shape-2"></div>
+      <div class="floating-shape shape-3"></div>
+      <div class="floating-shape shape-4"></div>
+      <div class="floating-shape shape-5"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+      <div class="nav-brand slide-in-left">
+        <span class="gradient-text">AURIS</span>
+      </div>
+      <div class="nav-links slide-in-right">
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <i class="fas fa-moon"></i>
+          <span>Dark Theme</span>
+        </button>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/groq-api" class="nav-link">API</a>
+        <a href="/document" class="nav-link">Docs</a>
+        <a href="/you" class="nav-link special">Dashboard</a>
+      </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title fade-in">
+          Ask <span class="gradient-text">Anything</span><br>
+          Get <span class="gradient-text">Everything</span>
+        </h1>
+        <p class="hero-subtitle fade-in delay-2">
+          Unlock the power of AI with AURIS - your intelligent assistant that understands context, 
+          processes images, analyzes documents, and provides instant, accurate answers to any question.
+        </p>
+        <div class="hero-buttons fade-in delay-3">
+          <button class="btn-primary btn-hover-effect" onclick="window.location.href='http://localhost:3000/register'">
+            <i class="fas fa-rocket"></i>
+            Get Started Free
+          </button>
+          <button class="btn-secondary btn-hover-effect" onclick="window.location.href='http://localhost:3000/login'">
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In
+          </button>
+        </div>
+      </div>
+      <div class="hero-visual fade-in delay-4">
+        <div class="ai-visualization">
+          <div class="ai-brain">
+            <div class="brain-core"></div>
+            <div class="neural-network">
+              <div class="neuron n1"></div>
+              <div class="neuron n2"></div>
+              <div class="neuron n3"></div>
+              <div class="neuron n4"></div>
+              <div class="neuron n5"></div>
+              <div class="connection c1"></div>
+              <div class="connection c2"></div>
+              <div class="connection c3"></div>
+              <div class="connection c4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Modern Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title fade-in">Why Choose <span class="gradient-text">AURIS</span></h2>
+        <p class="section-subtitle fade-in delay-1">Discover the powerful features that make AURIS the ultimate AI assistant</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card modern-card fade-in delay-1">
+          <div class="feature-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <h3 class="feature-title">Lightning Fast</h3>
+          <p class="feature-description">Get answers in milliseconds with our high-performance AI engine that processes queries at unprecedented speed.</p>
+          <div class="feature-highlight"></div>
+        </div>
+        
+        <div class="feature-card modern-card fade-in delay-2">
+          <div class="feature-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h3 class="feature-title">Intelligent Responses</h3>
+          <p class="feature-description">Our AI understands context and nuance, providing answers that go beyond simple keyword matching.</p>
+          <div class="feature-highlight"></div>
+        </div>
+        
+        <div class="feature-card modern-card fade-in delay-3">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3 class="feature-title">Secure & Private</h3>
+          <p class="feature-description">Enterprise-grade security ensures your data remains confidential and protected at all times.</p>
+          <div class="feature-highlight"></div>
+        </div>
+        
+        <div class="feature-card modern-card fade-in delay-4">
+          <div class="feature-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h3 class="feature-title">Document Analysis</h3>
+          <p class="feature-description">Upload and analyze PDFs, images, and documents with advanced AI-powered insights and summaries.</p>
+          <div class="feature-highlight"></div>
+        </div>
+        
+        <div class="feature-card modern-card fade-in delay-5">
+          <div class="feature-icon">
+            <i class="fas fa-image"></i>
+          </div>
+          <h3 class="feature-title">Image Understanding</h3>
+          <p class="feature-description">Upload images and get detailed analysis, descriptions, and answers about visual content.</p>
+          <div class="feature-highlight"></div>
+        </div>
+        
+        <div class="feature-card modern-card fade-in delay-6">
+          <div class="feature-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <h3 class="feature-title">Multi-Language</h3>
+          <p class="feature-description">Communicate in multiple languages with seamless translation and understanding capabilities.</p>
+          <div class="feature-highlight"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title fade-in">How <span class="gradient-text">AURIS</span> Works</h2>
+        <p class="section-subtitle fade-in delay-1">Three simple steps to unlock the power of AI assistance</p>
+      </div>
+      
+      <div class="steps-grid">
+        <div class="step-card fade-in delay-1">
+          <div class="step-number">01</div>
+          <div class="step-icon">
+            <i class="fas fa-microphone"></i>
+          </div>
+          <h3 class="step-title">Ask Your Question</h3>
+          <p class="step-description">
+            Type, speak, or upload documents and images. AURIS understands natural language and visual content with incredible precision.
+          </p>
+          <div class="step-arrow">→</div>
+        </div>
+        
+        <div class="step-card fade-in delay-2">
+          <div class="step-number">02</div>
+          <div class="step-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h3 class="step-title">AI Processing</h3>
+          <p class="step-description">
+            Our advanced neural networks analyze your query, understanding context, intent, and nuance to provide the most relevant response.
+          </p>
+          <div class="step-arrow">→</div>
+        </div>
+        
+        <div class="step-card fade-in delay-3">
+          <div class="step-number">03</div>
+          <div class="step-icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <h3 class="step-title">Get Results</h3>
+          <p class="step-description">
+            Receive comprehensive, accurate answers with supporting information, sources, and actionable insights in seconds.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title fade-in">What Our <span class="gradient-text">Users</span> Say</h2>
+        <p class="section-subtitle fade-in delay-1">Join thousands of satisfied users who trust AURIS</p>
+      </div>
+      
+      <div class="testimonials-grid">
+        <div class="testimonial-card fade-in delay-1">
+          <div class="testimonial-content">
+            <div class="quote-icon">"</div>
+            <p class="testimonial-text">
+              "AURIS has revolutionized how our team handles research. The accuracy and speed are simply unmatched in the industry."
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">
+              <img src="https://images.unsplash.com/photo-1494790108755-2616b612b5e5?w=80&h=80&fit=crop&crop=face" alt="Sarah Chen">
+            </div>
+            <div class="author-info">
+              <h4 class="author-name">Sarah Chen</h4>
+              <p class="author-title">CTO, TechVision Inc.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial-card fade-in delay-2">
+          <div class="testimonial-content">
+            <div class="quote-icon">"</div>
+            <p class="testimonial-text">
+              "As a researcher, I depend on AURIS daily. It's like having a brilliant research assistant available 24/7."
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" alt="Dr. Michael Roberts">
+            </div>
+            <div class="author-info">
+              <h4 class="author-name">Dr. Michael Roberts</h4>
+              <p class="author-title">Lead Researcher, Stanford AI Lab</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial-card fade-in delay-3">
+          <div class="testimonial-content">
+            <div class="quote-icon">"</div>
+            <p class="testimonial-text">
+              "The document analysis feature is incredible. It saves us hours of manual work every single day."
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" alt="Emily Zhang">
+            </div>
+            <div class="author-info">
+              <h4 class="author-name">Emily Zhang</h4>
+              <p class="author-title">Product Manager, DataFlow</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Creator Section -->
+  <section class="creator-section">
+    <div class="container">
+      <div class="creator-content">
+        <div class="creator-info">
+          <div class="section-header">
+            <h2 class="section-title fade-in">Meet the <span class="gradient-text">Creator</span></h2>
+            <p class="section-subtitle fade-in delay-1">Built with passion by a developer who believes in the power of AI</p>
+          </div>
+          
+          <div class="creator-card fade-in delay-2">
+            <div class="creator-avatar">
+              <div class="avatar-placeholder">
+                <i class="fas fa-user-circle"></i>
+              </div>
+            </div>
+            <div class="creator-details">
+              <h3 class="creator-name">Rakshit Rao</h3>
+              <p class="creator-title">Full-Stack Developer & AI Enthusiast</p>
+              <p class="creator-description">
+                Hey there! I'm Rakshit Rao, a passionate developer who created AURIS to make AI accessible and useful for everyone. 
+                As a student of technology, I believe in building tools that genuinely help people solve problems and learn new things.
+              </p>
+              <div class="creator-stats">
+                <div class="creator-stat">
+                  <i class="fas fa-code"></i>
+                  <span>Full-Stack Developer</span>
+                </div>
+                <div class="creator-stat">
+                  <i class="fas fa-brain"></i>
+                  <span>UI/UX Designer</span>
+                </div>
+                <div class="creator-stat">
+                  <i class="fas fa-graduation-cap"></i>
+                  <span>Continuous Learner</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="creator-message fade-in delay-3">
+            <div class="message-content">
+              <div class="quote-mark">"</div>
+              <p class="message-text">
+                I built AURIS because I wanted to create something that could genuinely help people in their daily tasks. 
+                Whether you're a student, professional, or just curious about AI, AURIS is designed to be your intelligent companion.
+              </p>
+              <div class="message-signature">- Rakshit</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title fade-in">Ready to Transform Your <span class="gradient-text">Workflow</span>?</h2>
+        <p class="cta-subtitle fade-in delay-1">
+          Join thousands of professionals who are already using AURIS to unlock the power of AI. 
+          Start your journey today with our free tier.
+        </p>
+        <div class="cta-buttons fade-in delay-2">
+          <button class="btn-primary btn-hover-effect" onclick="window.location.href='http://localhost:3000/register'">
+            <i class="fas fa-rocket"></i>
+            Start Free Trial
+          </button>
+          <button class="btn-outline btn-hover-effect" onclick="window.location.href='http://localhost:3000/login'">
+            <i class="fas fa-sign-in-alt"></i>
+            Login
+          </button>
+        </div>
+        <div class="cta-features fade-in delay-3">
+          <div class="cta-feature">
+            <i class="fas fa-check"></i>
+            <span>Free to use</span>
+          </div>
+          <div class="cta-feature">
+            <i class="fas fa-check"></i>
+            <span>Setup in under 2 minutes</span>
+          </div>
+          <div class="cta-feature">
+            <i class="fas fa-check"></i>
+            <span>Fast and Secure</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JavaScript for Modern Animations -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      
+      // Intersection Observer for scroll-triggered animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, observerOptions);
+
+      // Observe all fade-in elements
+      document.querySelectorAll('.fade-in').forEach(element => {
+        observer.observe(element);
+      });
+
+      // Immediately show hero elements
+      document.querySelectorAll('.hero-section .fade-in, .hero-section .slide-in-left, .hero-section .slide-in-right').forEach(el => {
+        el.classList.add('visible');
+      });
+
+      // Add staggered animation to feature cards
+      const featureCards = document.querySelectorAll('.feature-card');
+      featureCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+
+      // Random neuron activation
+      const neurons = document.querySelectorAll('.neuron');
+      if (neurons.length > 0) {
+        setInterval(() => {
+          // Remove all active classes
+          neurons.forEach(neuron => neuron.classList.remove('active'));
+          
+          // Add active class to random neurons
+          const randomNeurons = Array.from(neurons)
+            .sort(() => 0.5 - Math.random())
+            .slice(0, Math.floor(Math.random() * 3) + 1);
+          
+          randomNeurons.forEach(neuron => neuron.classList.add('active'));
+        }, 2000);
+      }
+
+      // Dynamic particle generation
+      const particlesContainer = document.querySelector('.particles');
+      if (particlesContainer) {
+        const createParticle = () => {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.style.width = Math.random() * 8 + 4 + 'px';
+          particle.style.height = particle.style.width;
+          particle.style.left = Math.random() * 100 + '%';
+          particle.style.animationDelay = '0s';
+          particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+          
+          particlesContainer.appendChild(particle);
+          
+          // Remove particle after animation
+          setTimeout(() => {
+            if (particle.parentNode) {
+              particle.parentNode.removeChild(particle);
+            }
+          }, 25000);
+        };
+        
+        // Create particles periodically
+        setInterval(createParticle, 3000);
+      }
+
+      // Smooth scroll for any anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+
+      // Navigation scroll effect
+      const nav = document.querySelector('.modern-nav');
+      if (nav) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 100) {
+            nav.classList.add('nav-scrolled');
+          } else {
+            nav.classList.remove('nav-scrolled');
+          }
+        });
+      }
+    });
+
+    // Theme Toggle Functionality
+    function toggleTheme() {
+      const body = document.body;
+      const themeButton = document.querySelector('.theme-toggle');
+      const buttonText = themeButton.querySelector('span');
+      const buttonIcon = themeButton.querySelector('i');
+      
+      if (body.classList.contains('dark-theme')) {
+        // Switch to light theme
+        body.classList.remove('dark-theme');
+        themeButton.classList.remove('active');
+        buttonText.textContent = 'Dark Theme';
+        buttonIcon.className = 'fas fa-moon';
+        
+        // Store preference
+        localStorage.setItem('theme', 'light');
+      } else {
+        // Switch to dark theme
+        body.classList.add('dark-theme');
+        themeButton.classList.add('active');
+        buttonText.textContent = 'Light Theme';
+        buttonIcon.className = 'fas fa-sun';
+        
+        // Store preference
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Load saved theme preference
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeButton = document.querySelector('.theme-toggle');
+      const buttonText = themeButton.querySelector('span');
+      const buttonIcon = themeButton.querySelector('i');
+      
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeButton.classList.add('active');
+        buttonText.textContent = 'Light Theme';
+        buttonIcon.className = 'fas fa-sun';
+      }
+    });
+  </script>
+</body>
+</html>

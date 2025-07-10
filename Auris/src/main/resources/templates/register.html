@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!-- Coding By CodingNepal - www.codingnepalweb.com -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" th:href="@{/register.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <form id="registerForm">
+      <h2 class="loginh2">REGISTER</h2>
+        <div class="input-field">
+        <input type="text" name="email" required>
+        <label>Email</label>
+      </div>
+      <div class="input-field">
+        <input type="password" name="password" required>
+        <label>Password</label>
+      </div>
+      
+      <button class="submitbtn"  type="submit">REGISTER</button>
+      <div class="register">
+        <p> Have an account? <a href="/login">Login</a></p>
+      </div>
+    </form>
+  </div>
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const email = event.target.email.value;
+      const password = event.target.password.value;
+
+      try {
+        const response = await fetch("http://localhost:8080/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+          throw new Error("Registration failed");
+        }
+
+        const data = await response.json();
+        console.log("Registered successfully:", data);
+        
+        // Store user authentication data for the dashboard
+        localStorage.setItem('userId', data.userId || data.id || '1');
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('authToken', data.token || 'temp-token');
+        
+        // Store complete user data for immediate display
+        const userData = {
+          name: data.name || email.split('@')[0],
+          email: data.email || email,
+          phone: data.phone || '',
+          id: data.userId || data.id
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        console.log('Stored user data after registration:', userData);
+        console.log('All localStorage after registration:', {
+          userId: localStorage.getItem('userId'),
+          userEmail: localStorage.getItem('userEmail'),
+          authToken: localStorage.getItem('authToken'),
+          userData: localStorage.getItem('userData')
+        });
+        
+        // Add a small delay to ensure data is stored before redirect
+        setTimeout(() => {
+          window.location.href = "http://localhost:3000";
+        }, 100);
+
+      } catch (error) {
+        console.error("Registration error:", error);
+        alert("Registration failed. Try again.");
+      }
+    });
+  </script>
+</body>
+</html>
