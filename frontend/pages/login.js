@@ -1,11 +1,8 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { API_BASE_URL } from '../../lib/config';
 
-export default function Register() {
+export default function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -25,7 +22,7 @@ export default function Register() {
     }
   }, [router]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -36,14 +33,14 @@ export default function Register() {
   };
 
   // Google Sign-In callback with rate limiting protection
-  const handleGoogleLogin = async (credential: string) => {
+  const handleGoogleLogin = async (credential) => {
     setIsLoading(true);
     setErrorMessage('');
 
     try {
-      console.log('🔑 Attempting Google registration/login');
+      console.log('🔑 Attempting Google login');
       
-      const response = await fetch(`${API_BASE_URL}/auth/google`, {
+      const response = await fetch('http://localhost:8080/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -62,10 +59,10 @@ export default function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || data.error || 'Google registration failed');
+        throw new Error(data.message || data.error || 'Google login failed');
       }
 
-      console.log('✅ Google registration/login successful:', data);
+      console.log('✅ Google login successful:', data);
       
       // Store user authentication data
       localStorage.setItem('userId', data.userId || data.id || '1');
@@ -85,11 +82,11 @@ export default function Register() {
       console.log('💾 Stored Google user data:', userData);
       
       // Redirect to dashboard
-      router.push('/');
+      window.location.href = 'http://localhost:3000/';
 
-    } catch (error: any) {
-      console.error('❌ Google registration failed:', error);
-      setErrorMessage(error.message || 'Google registration failed. Please try again.');
+    } catch (error) {
+      console.error('❌ Google login failed:', error);
+      setErrorMessage(error.message || 'Google login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -101,13 +98,13 @@ export default function Register() {
     const maxAttempts = 3;
     
     const initializeGoogleSignIn = () => {
-      if (typeof window !== 'undefined' && (window as any).google && initializationAttempts < maxAttempts) {
+      if (typeof window !== 'undefined' && window.google && initializationAttempts < maxAttempts) {
         initializationAttempts++;
         
         try {
-          (window as any).google.accounts.id.initialize({
+          window.google.accounts.id.initialize({
             client_id: '308626026639-mjsot4dvjkc6a62j76ahjh4hrfogu419.apps.googleusercontent.com',
-            callback: (response: any) => {
+            callback: (response) => {
               handleGoogleLogin(response.credential);
             },
             auto_select: false,
@@ -118,12 +115,12 @@ export default function Register() {
           setTimeout(() => {
             const buttonContainer = document.getElementById('google-signin-button');
             if (buttonContainer) {
-              (window as any).google.accounts.id.renderButton(
+              window.google.accounts.id.renderButton(
                 buttonContainer,
                 {
                   theme: 'outline',
                   size: 'large',
-                  text: 'signup_with',
+                  text: 'signin_with',
                   shape: 'rectangular',
                   width: 400,
                   logo_alignment: 'left',
@@ -136,7 +133,7 @@ export default function Register() {
           console.log('✅ Google Sign-In initialized successfully');
           console.log('🔍 Current origin:', window.location.origin);
           console.log('🔍 Current URL:', window.location.href);
-        } catch (error: any) {
+        } catch (error) {
           console.error('❌ Google Sign-In initialization failed:', error);
           
           // Retry after delay if it's a rate limit issue
@@ -150,12 +147,12 @@ export default function Register() {
 
     // Wait for Google script to load with timeout
     const timeoutId = setTimeout(() => {
-      if (!(window as any).google) {
+      if (!window.google) {
         console.warn('⚠️ Google Sign-In script failed to load within timeout');
       }
     }, 10000);
 
-    if ((window as any).google) {
+    if (window.google) {
       clearTimeout(timeoutId);
       initializeGoogleSignIn();
     } else {
@@ -172,20 +169,20 @@ export default function Register() {
     }
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
 
     try {
-      console.log('📝 Attempting registration for:', formData.email);
+      console.log('🔑 Attempting login for:', formData.email);
       
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      const response = await fetch('http://localhost:8080/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include',
+        credentials: 'include', // Important for session cookies
         body: JSON.stringify({
           email: formData.email,
           password: formData.password
@@ -195,10 +192,10 @@ export default function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || data.error || 'Registration failed');
+        throw new Error(data.message || data.error || 'Login failed');
       }
 
-      console.log('✅ Registration successful:', data);
+      console.log('✅ Login successful:', data);
       
       // Store user authentication data for the dashboard
       localStorage.setItem('userId', data.userId || data.id || '1');
@@ -207,7 +204,7 @@ export default function Register() {
       
       // Store complete user data for immediate display
       const userData = {
-        name: data.name || '',
+        name: data.name || '', // Use actual name from database, empty string if not set
         email: data.email || formData.email,
         phone: data.phone || '',
         id: data.userId || data.id,
@@ -218,11 +215,11 @@ export default function Register() {
       console.log('💾 Stored user data:', userData);
       
       // Redirect to dashboard
-      router.push('/');
+      window.location.href = 'http://localhost:3000/';
 
-    } catch (error: any) {
-      console.error('❌ Registration failed:', error);
-      setErrorMessage(error.message || 'Registration failed. Please try again.');
+    } catch (error) {
+      console.error('❌ Login failed:', error);
+      setErrorMessage(error.message || 'Login failed. Please check your email and password.');
     } finally {
       setIsLoading(false);
     }
@@ -231,18 +228,19 @@ export default function Register() {
   return (
     <>
       <Head>
-        <title>Register - AURIS</title>
+        <title>Login - AURIS</title>
         <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
         <script src="https://accounts.google.com/gsi/client" async defer></script>
       </Head>
       
-      <div className="register-container">
+      <div className="login-container">
         <div className="wrapper">
           <form onSubmit={handleSubmit}>
-            <h2 className="loginh2">REGISTER</h2>
+            <h2 className="loginh2">LOGIN</h2>
             
+            {/* Error Message */}
             {errorMessage && (
               <div className="error-message">
                 {errorMessage}
@@ -278,7 +276,7 @@ export default function Register() {
               type="submit"
               disabled={isLoading}
             >
-              {isLoading ? 'CREATING ACCOUNT...' : 'REGISTER'}
+              {isLoading ? 'LOGGING IN...' : 'LOG IN'}
             </button>
             
             {/* Divider */}
@@ -291,15 +289,15 @@ export default function Register() {
             
             <div className="register">
               <p>
-                Have an account?{' '}
+                Don't have an account?{' '}
                 <a 
                   href="#" 
                   onClick={(e) => {
                     e.preventDefault();
-                    router.push('/login');
+                    router.push('/register');
                   }}
                 >
-                  Login
+                  Register
                 </a>
               </p>
             </div>
@@ -310,7 +308,7 @@ export default function Register() {
                   href="#" 
                   onClick={(e) => {
                     e.preventDefault();
-                    router.push('/');
+                    window.location.href = 'http://localhost:8080/';
                   }}
                 >
                   ← Back to home
@@ -329,7 +327,7 @@ export default function Register() {
           font-family: "Open Sans", sans-serif;
         }
         
-        .register-container {
+        .login-container {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -339,7 +337,7 @@ export default function Register() {
           position: relative;
         }
         
-        .register-container::before {
+        .login-container::before {
           content: "";
           position: absolute;
           width: 100%;
@@ -503,6 +501,39 @@ export default function Register() {
           color: rgba(255, 255, 255, 0.7);
           font-size: 14px;
           font-weight: 500;
+        }
+        
+        .google-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          padding: 12px 20px;
+          background: #fff;
+          color: #757575;
+          border: 1px solid #dadce0;
+          border-radius: 6px;
+          font-size: 16px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-bottom: 10px;
+        }
+        
+        .google-btn:hover:not(:disabled) {
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          border-color: #d2d2d2;
+        }
+        
+        .google-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+        
+        .google-icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 12px;
         }
         
         .google-signin-container {
