@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { FRONTEND_URL } from '../lib/config';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -82,7 +83,7 @@ export default function Login() {
       console.log('💾 Stored Google user data:', userData);
       
       // Redirect to dashboard
-      window.location.href = 'http://localhost:3000/';
+      window.location.href = FRONTEND_URL + '/';
 
     } catch (error) {
       console.error('❌ Google login failed:', error);
@@ -215,7 +216,7 @@ export default function Login() {
       console.log('💾 Stored user data:', userData);
       
       // Redirect to dashboard
-      window.location.href = 'http://localhost:3000/';
+      window.location.href = FRONTEND_URL + '/';
 
     } catch (error) {
       console.error('❌ Login failed:', error);
@@ -344,7 +345,6 @@ export default function Login() {
           height: 100%;
           background: 
             linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
-            url('/images/mountain-landscape.jpg'),
             linear-gradient(135deg, 
               #4a5568 0%, 
               #2d3748 25%, 
@@ -359,9 +359,9 @@ export default function Login() {
               #7f7fd5 75%, 
               #667eea 100%
             );
-          background-position: center, center, center, center;
-          background-size: cover, cover, cover, cover;
-          background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+          background-position: center, center, center;
+          background-size: cover, cover, cover;
+          background-repeat: no-repeat, no-repeat, no-repeat;
           background-attachment: fixed;
           z-index: -1;
         }
